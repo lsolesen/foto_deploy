@@ -1,0 +1,7 @@
+core = "7.x"
+description = "Deploy module for foto.vih.dk"
+name = "Foto Deploy"
+package = "VIH"
+project = "foto_deploy"
+version = "7.x-0.1"
+
