@@ -8,9 +8,9 @@
  *
  * See http://dcycleproject.org/node/43
  */
-function vimi_deploy_install() {
+function foto_deploy_install() {
   for ($i = 7001; $i < 8000; $i++) {
-    $candidate = 'vimi_deploy_update_' . $i;
+    $candidate = 'foto_deploy_update_' . $i;
     if (function_exists($candidate)) {
       $candidate();
     }
@@ -20,7 +20,7 @@ function vimi_deploy_install() {
 /**
  * Setting the theme.
  */
-function vimi_deploy_update_7000() {
+function foto_deploy_update_7000() {
   // Setting for date api.
   variable_set('configurable_timezones', 0);
   variable_set('date_first_day', 1);
@@ -56,17 +56,20 @@ function vimi_deploy_update_7000() {
 }
 
 /**
- * Granting permissions for the editor.
+ * Granting permissions for the editor for a better experience.
  */
-function vimi_deploy_update_7001() {
-  $role = user_role_load_by_name('editor');
-  user_role_grant_permissions($role->rid, array('view the administration theme', 'save draft', 'create files', 'create url aliases'));
+function foto_deploy_update_7001() {
+  module_enable(array('media_wysiwyg', 'media_wysiwyg_view_mode'));
+  $editor = user_role_load_by_name('editor');
+  user_role_grant_permissions($editor->rid, array('view the administration theme', 'save draft', 'create files', 'create url aliases'));
+
+  user_role_grant_permissions($editor->rid, array('administer panelizer node panopoly_page defaults', 'administer panelizer node panopoly_page overview', 'administer panelizer node panopoly_page settings', 'administer panelizer node panopoly_page layout', 'administer panelizer node panopoly_page content'));  
 }
 
 /**
- * Disable unneeded modules.
+ * Disable apps and panopoly_news_demo.
  */
-function vimi_deploy_update_7002() {
+function foto_deploy_update_7002() {
   module_disable(array('apps'));
   drupal_uninstall_modules(array('apps'));
   
@@ -77,7 +80,7 @@ function vimi_deploy_update_7002() {
 /**
  * Enable Panopoly News.
  */
-function vimi_deploy_update_7003() {
+function foto_deploy_update_7003() {
   module_enable(array('panopoly_news'));
 
   $administrator = user_role_load_by_name('administrator');
@@ -95,7 +98,7 @@ function vimi_deploy_update_7003() {
 /**
  * Revoke breadcrumb permissions for the editor
  */
-function vimi_deploy_update_7004() {
+function foto_deploy_update_7004() {
   $editor = user_role_load_by_name('editor');
 
   user_role_revoke_permissions($editor->rid, array('administer panelizer taxonomy_term panopoly_categories breadcrumbs', 'administer panelizer node panopoly_page breadcrumbs'));
@@ -104,19 +107,25 @@ function vimi_deploy_update_7004() {
 /**
  * Enable other necessary modules.
  */
-function vimi_deploy_update_7005() {
+function foto_deploy_update_7005() {
+  $editor = user_role_load_by_name('editor');
+
   module_enable(array('google_analytics'));
-  module_enable(array('metatag', 'metatag_panels'));
   module_enable(array('mailchimp', 'mailchimp_lists'));
+
+  // Webform
   module_enable(array('webform', 'webform_mailchimp', 'select_or_other', 'addressfield_tokens'));
-  module_enable(array('media_wysiwyg', 'media_wysiwyg_view_mode'));
-  module_enable(array('vih_viggo', 'vih_calendar'));
+  user_role_grant_permissions($editor->rid, array('create webform content', 'edit own webform content', 'edit any webform content', 'delete own webform content', 'delete any webform content'));
+
+  // Metatags
+  module_enable(array('metatag', 'metatag_panels'));
+  user_role_grant_permissions($editor->rid, array('edit meta tags'));
 }
 
 /**
  * File entity settings.
  */
-function vimi_deploy_update_7006() {
+function foto_deploy_update_7006() {
   variable_set('file_entity_max_filesize', '5 MB');
   variable_set('file_entity_file_upload_wizard_skip_scheme', 1);
 }
@@ -124,22 +133,11 @@ function vimi_deploy_update_7006() {
 /**
  * Settings for transliteration.
  */
-function vimi_deploy_update_7007() {
+function foto_deploy_update_7007() {
   if (module_exists('pathauto')) {
     if (module_exists('transliteration')) {
       variable_set('pathauto_transliterate', 1);
     }
     variable_set('pathauto_reduce_ascii', 1);
   }
-}
-
-/**
- * Adding permissions for metatag.
- */
-function vimi_deploy_update_7008() {
-  $editor = user_role_load_by_name('editor');
-
-  user_role_grant_permissions($editor->rid, array('edit meta tags'));
-  user_role_grant_permissions($editor->rid, array('create webform content', 'edit own webform content', 'edit any webform content', 'delete own webform content', 'delete any webform content'));
-  user_role_grant_permissions($editor->rid, array('create vih_calendar content', 'edit own vih_calendar content', 'edit any vih_calendar content', 'delete own vih_calendar content', 'delete any vih_calendar content'));
 }
