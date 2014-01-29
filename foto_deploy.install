@@ -141,3 +141,11 @@ function foto_deploy_update_7007() {
     variable_set('pathauto_reduce_ascii', 1);
   }
 }
+
+/**
+ * Uninstall panopoly_demo.
+ */
+function foto_deploy_update_7008() {
+  module_disable(array('panopoly_demo'));
+  drupal_uninstall_modules(array('panopoly_demo'));
+}
