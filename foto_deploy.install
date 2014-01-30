@@ -149,3 +149,11 @@ function foto_deploy_update_7008() {
   module_disable(array('panopoly_demo'));
   drupal_uninstall_modules(array('panopoly_demo'));
 }
+
+/**
+ * Uninstall radix modules.
+ */
+function foto_deploy_update_7009() {
+  module_enable(array('radix_layouts', 'radix_core', 'radix_admin'));
+  // would be nice to enable the correct layouts here also.
+}
